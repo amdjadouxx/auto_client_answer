@@ -1,0 +1,629 @@
+{
+  "name": "auto_answer",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1820,
+        -140
+      ],
+      "id": "e95d4bd5-3ff3-4ece-8050-582be1ccffa4",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iwICIT10mcOTvPzn",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{$node[\"Gmail Trigger\"].json[\"id\"]}}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1160,
+        260
+      ],
+      "id": "040bf1bf-092c-4c6e-847c-148e9e4cc8ad",
+      "name": "Mark Email as Read",
+      "webhookId": "78995c35-6b2d-436b-a2cb-a389f9f6f19d",
+      "retryOnFail": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iwICIT10mcOTvPzn",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1u-KMq01ptKLcv2Rhn0gNlSifDI2p1cFC",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -940,
+        185
+      ],
+      "id": "c4d8ac9c-6c94-4660-8495-76aba248758e",
+      "name": "Download emergency words",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jbsG7GKWiqhAuWXs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "16O4icCuR6jyegS2FosOptb--jCxUwI_u",
+          "mode": "list",
+          "cachedResultName": "",
+          "cachedResultUrl": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -940,
+        385
+      ],
+      "id": "563d187c-98ec-44db-9825-598f25db88ed",
+      "name": "Download Rules",
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "jbsG7GKWiqhAuWXs",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        185
+      ],
+      "id": "f16789fc-5ad8-4684-9049-f885f70a4534",
+      "name": "Extract from Emergency",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        385
+      ],
+      "id": "27d54946-7194-4929-a904-0302ec9cbd13",
+      "name": "Extract from Rules",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -500,
+        -100
+      ],
+      "id": "23d2ac32-53e7-4707-978c-3f62a4734442",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34843154-ee72-406d-b41c-d1bad5e3bfd1",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1380,
+        110
+      ],
+      "id": "92b39e28-8bf8-4f91-8ccc-acb41744cb5f",
+      "name": "If resend by me",
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0de4cc33-ec4a-46e4-8677-1826ff042ade",
+              "leftValue": "={{ $json.snippet }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1600,
+        -140
+      ],
+      "id": "716e1c1b-ecdb-4fea-a8d8-86b210c8b26c",
+      "name": "If empty"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4",
+          "mode": "list",
+          "cachedResultName": "GPT-4"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.prompt }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -80,
+        -100
+      ],
+      "id": "deb12dea-dca1-456e-98f1-a5ef07ec522c",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "2k6CnGvxGepgP6vD",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{$node[\"Gmail Trigger\"].json[\"id\"]}}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -1380,
+        -280
+      ],
+      "id": "f148d1c2-b90a-4e12-9212-9d4720fbcaeb",
+      "name": "Mark Email as Read when empty",
+      "webhookId": "78995c35-6b2d-436b-a2cb-a389f9f6f19d",
+      "retryOnFail": true,
+      "alwaysOutputData": false,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iwICIT10mcOTvPzn",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1160,
+        60
+      ],
+      "id": "7dc806b9-6104-40f6-8fb3-22916dc6db3f",
+      "name": "Email cannot be process"
+    },
+    {
+      "parameters": {
+        "from": "",
+        "to": "",
+        "toWhatsapp": true,
+        "message": "={{ $json.whatsapp }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -100
+      ],
+      "id": "1fe53b21-afbd-4fa7-9a44-e6517f808e2b",
+      "name": "Twilio",
+      "credentials": {
+        "twilioApi": {
+          "id": "66WTv6bf3lnV3Efm",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst email = items[0].json;\nconst urgentThemes = items[1].json.data || [];\n\nconst data3 = items[2].json.data;\nconst lines = Array.isArray(data3?.lines) ? data3.lines : Array.isArray(data3) ? data3 : [];\nconst buildingRulesText = lines.join('\\n');\n\nconst emailSnippet = email.snippet || '';\nconst emailTitle = email.Subject || '';\nconst emailFrom = email.From || '';\n\nconst prompt = `\nTu es une intelligence artificielle spécialisée en gestion locative. Tu assistes un gestionnaire immobilier à réceptionner et analyser les emails des locataires afin de rédiger un brouillon de réponse clair, professionnel et prêt à l’envoi.\n\n⚠️ Important : l’IA ne prend aucune action ni intervention. Toute action, y compris l’envoi d’un accusé de réception ou de toute communication, est réservée au gérant. L’IA prépare uniquement le brouillon de mail et un message WhatsApp d’explication à destination du gérant. Le mail généré est un **brouillon**, prêt à être relu et envoyé par le gérant.  \nL’IA ne doit jamais indiquer qu’un mail a été envoyé ou qu’une intervention a été réalisée.\n\n🎯 Objectif : analyser l’email d’un locataire, détecter les problèmes (urgents ou non), et générer :  \n- un brouillon d’email de réponse clair, respectueux et prêt à l’envoi  \n- un message WhatsApp à envoyer au gérant, expliquant brièvement la situation, sans suggérer que l’IA agit, mais précisant que le gérant doit gérer la suite\n\n---\n\n📚 Données fournies :\n\n1) Liste des thèmes d'urgence à surveiller (exemples : fuite, panne, incendie) :  \n${urgentThemes.map(t => `- ${t}`).join('\\n')}\n\n2) Extraits du règlement de l’immeuble :  \n${buildingRulesText}\n\n3) Email reçu :  \nSujet : \"${emailTitle}\"  \nExpéditeur : \"${emailFrom}\"  \nContenu : \"${emailSnippet}\"\n\n---\n\n🧠 Ton rôle :\n\nAnalyser les données ci-dessus et générer un objet JSON contenant les 4 champs suivants :\n\n{\n  \"email\": \"adresse email du locataire (reprise telle quelle)\",\n  \"subject\": \"objet complet du mail de réponse (prêt à l’envoi)\",\n  \"message\": \"corps complet du mail de réponse, bien formaté avec paragraphes et sauts de ligne, ton professionnel et empathique, sans placeholders ni contenu à compléter manuellement\",\n  \"whatsapp\": \"message court et clair à envoyer au gérant, contenant :\\n  - l’adresse email du locataire\\n  - le problème exprimé par le locataire (en une phrase)\\n  - ce que contient le mail de réponse (en une phrase)\\n  - une mention explicite que le gérant doit prendre la suite\\n  - formaté proprement avec des retours à la ligne\"\n}\n\n---\n\n🧾 Contraintes à respecter :\n\n- Toujours générer les 4 champs du JSON, même si l’email du locataire est incomplet  \n- Le message email doit être professionnel, empathique et bien structuré (paragraphes, retours à la ligne)  \n- En cas d’urgence possible, rappeler que des frais peuvent s’appliquer selon le règlement (section 2)  \n- Le message WhatsApp doit toujours inclure l’email du locataire, être clair, neutre, et ne jamais indiquer que l’IA prend une quelconque action  \n- En particulier, ne jamais dire que \"j’ai envoyé\", \"nous avons informé\", ou toute autre phrase laissant penser que l’IA agit  \n- Toute action (y compris l’envoi d’un accusé de réception) est réservée au gérant  \n- Ne jamais inclure de champs à remplir manuellement (ex. : [NOM], [DATE]) ni instructions dans le texte  \n- Ne jamais divulguer d’informations sensibles ou faire de supposition non fondée  \n- Si le cas est complexe, rédige un mail clair et simple signalant que le gérant doit gérer la suite ; le WhatsApp devra clairement le signaler au gérant  \n- Retourne uniquement l’objet JSON demandé, sans introduction ni conclusion\n\n---\n\n🟢 Format de sortie attendu :  \nUniquement un JSON valide avec les quatre champs ci-dessus.\n`;\n\nreturn [{ json: { prompt } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -260,
+        -100
+      ],
+      "id": "171a4894-07ad-416e-b2fe-47332edec2e9",
+      "name": "Add prompt",
+      "retryOnFail": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Récupérer la chaîne JSON dans content (string avec échappements)\nconst rawContent = items[0].json.message.content;\n\n// Parse le contenu JSON (c'est une chaîne JSON dans la chaîne)\nlet parsed;\ntry {\n  parsed = JSON.parse(rawContent);\n} catch (e) {\n  throw new Error(\"Impossible de parser le JSON dans message.content : \" + e.message);\n}\n\n// Retourner un item avec les propriétés extraites\nreturn [{\n  json: {\n    email: parsed.email,\n    message: parsed.message,\n    subject: parsed.subject,\n    whatsapp: parsed.whatsapp,\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        -100
+      ],
+      "id": "813a2665-b835-415d-88d1-27b7f1b0e8a5",
+      "name": "Clean output"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Accusé de réception",
+        "emailType": "text",
+        "message": "Votre email a bien été reçu et sera traité au plus vite.\n\nCordialement,",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        540,
+        -300
+      ],
+      "id": "3400cd3e-62e3-4bca-b0b4-b2342ddeaef3",
+      "name": "Send received confirmation",
+      "webhookId": "3d05349d-f294-4671-bd57-6b6c6548b5ed",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iwICIT10mcOTvPzn",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.message }}",
+        "options": {
+          "sendTo": "={{ $json.email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        540,
+        100
+      ],
+      "id": "a7bb1996-6c0e-4f61-ba79-ae4ea35624af",
+      "name": "Create Draft",
+      "webhookId": "41acf285-95d3-4940-824f-a1e0bef943b9",
+      "retryOnFail": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "iwICIT10mcOTvPzn",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Get the email and avoid wrong cases\n",
+        "height": 920,
+        "width": 960,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1940,
+        -380
+      ],
+      "id": "8e36e99b-69b9-4c9b-9418-935815f3aaba",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Receive other informations to complete the email",
+        "height": 920,
+        "width": 860,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -980,
+        -380
+      ],
+      "id": "9cb94ac0-b62b-496c-bbc6-8894faccbad0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Answer and report of what has been done",
+        "height": 920,
+        "width": 880,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -380
+      ],
+      "id": "b1ed715f-ddf5-4211-ac33-f1a9152d059f",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download emergency words": {
+      "main": [
+        [
+          {
+            "node": "Extract from Emergency",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Rules": {
+      "main": [
+        [
+          {
+            "node": "Extract from Rules",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from Emergency": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Add prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If resend by me": {
+      "main": [
+        [
+          {
+            "node": "Email cannot be process",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Email as Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Email as Read": {
+      "main": [
+        [
+          {
+            "node": "Download Rules",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Download emergency words",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If empty": {
+      "main": [
+        [
+          {
+            "node": "Mark Email as Read when empty",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If resend by me",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from Rules": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Clean output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add prompt": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean output": {
+      "main": [
+        [
+          {
+            "node": "Create Draft",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send received confirmation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Twilio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send received confirmation": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bf82df3a-1791-40a0-82cb-e07ab0d90d6d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f39c2b98b19709ed534274ab9768731d62442a7dc526f6403364b9ac386e2120"
+  },
+  "id": "Fz3Wf0sWjV7S3P4o",
+  "tags": []
+}
