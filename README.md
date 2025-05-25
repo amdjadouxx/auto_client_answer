@@ -5,7 +5,7 @@ Générez automatiquement des réponses à vos e-mails avec un workflow **n8n** 
 ## Fonctionnalités
 
 - Lecture automatique du contenu d’un e-mail
-- Construction dynamique d’un prompt incluant des fichiers d’aide (PDF, TXT, etc.)
+- Construction dynamique d’un prompt incluant des fichiers d’aide
 - Génération d’une réponse grâce à une API IA (OpenAI ou autre)
 - Option de vérification manuelle ou envoi automatique
 - Orchestration complète avec **n8n**, facilement modifiable
