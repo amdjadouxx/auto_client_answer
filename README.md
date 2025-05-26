@@ -1,6 +1,6 @@
 # auto_client_answer
 
-Générez automatiquement des réponses à vos e-mails avec un workflow **n8n** basé sur l’IA (LLM comme OpenAI). Ce projet vous fait gagner un temps précieux en exploitant des fichiers pour enrichir les réponses générées.
+Générez automatiquement des réponses à vos e-mails avec un workflow **n8n** basé sur l’IA. Ce projet vous fait gagner un temps précieux en exploitant des fichiers pour enrichir les réponses générées.
 
 ## Fonctionnalités
 
@@ -31,7 +31,7 @@ Le workflow combine une logique simple mais efficace :
 ## Prérequis
 
 - Une instance n8n (locale ou cloud)
-- Un compte OpenAI ou tout autre fournisseur d’API LLM
+- Un compte OpenAI
 - Des fichiers sources (optionnels mais recommandés) pour contextualiser les réponses
 
 ## Lancer le projet
